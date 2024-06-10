@@ -1,4 +1,4 @@
 src-git packages https://github.com/huanghitoy/packages;openwrt-23.05
 src-git luci https://github.com/huanghitoy/luci.git;openwrt-23.05
 src-git routing https://github.com/huanghitoy/routing.git;openwrt-23.05
-src-git telephony https://github.com/hitoyhuang/telephony.git;openwrt-23.05
+src-git telephony https://github.com/huanghitoy/telephony.git;master
