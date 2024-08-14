@@ -309,7 +309,7 @@ define Device/netgear_ath79_nand_128m
   KERNEL_SIZE := 4096k
   BLOCKSIZE := 128k
   PAGESIZE := 2048
-  IMAGE_SIZE := 121m		
+  IMAGE_SIZE := 121m
   KERNEL := kernel-bin | append-dtb | lzma -d20 | \
 	pad-offset $$(KERNEL_SIZE) 129 | uImage lzma | \
 	append-string -e '\xff' | \
