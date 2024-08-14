@@ -310,11 +310,10 @@ define Device/netgear_ath79_nand_128m
   BLOCKSIZE := 128k
   PAGESIZE := 2048
   IMAGE_SIZE := 121m
-  KERNEL := kernel-bin | append-dtb | lzma -d20 | \
+  KERNEL := kernel-bin | append-dtb | lzma | \
 	pad-offset $$(KERNEL_SIZE) 129 | uImage lzma | \
 	append-string -e '\xff' | \
 	append-uImage-fakehdr filesystem $$(UIMAGE_MAGIC)
-  KERNEL_INITRAMFS := kernel-bin | append-dtb | lzma -d20 | uImage lzma
   IMAGES := sysupgrade.bin factory.img
   IMAGE/factory.img := append-kernel | append-ubi | netgear-dni | \
 	check-size
@@ -322,6 +321,27 @@ define Device/netgear_ath79_nand_128m
 	check-size
   UBINIZE_OPTS := -E 5
 endef
+
+define Device/netgear_wndr4300_128m
+  SOC := ar9344
+  DEVICE_MODEL := WNDR4300_128M
+  UIMAGE_MAGIC := 0x33373033
+  NETGEAR_BOARD_ID := WNDR4300
+  NETGEAR_HW_ID := 29763948+0+128+128+2x2+3x3
+  $(Device/netgear_ath79_nand_128m)
+endef
+TARGET_DEVICES += netgear_wndr4300_128m
+
+define Device/netgear_wndr3700-v4_128m
+  SOC := ar9344
+  DEVICE_MODEL := WNDR3700
+  DEVICE_VARIANT := v4
+  UIMAGE_MAGIC := 0x33373033
+  NETGEAR_BOARD_ID := WNDR3700v4
+  NETGEAR_HW_ID := 29763948+128+128
+  $(Device/netgear_ath79_nand_128m)
+endef
+TARGET_DEVICES += netgear_wndr3700-v4_128m
 
 define Device/netgear_pgzng1
   SOC := ar9344
@@ -357,7 +377,7 @@ define Device/netgear_wndr3700-v4
   UIMAGE_MAGIC := 0x33373033
   NETGEAR_BOARD_ID := WNDR3700v4
   NETGEAR_HW_ID := 29763948+128+128
-  $(Device/netgear_ath79_nand_128m)
+  $(Device/netgear_ath79_nand)
 endef
 TARGET_DEVICES += netgear_wndr3700-v4
 
@@ -367,7 +387,7 @@ define Device/netgear_wndr4300
   UIMAGE_MAGIC := 0x33373033
   NETGEAR_BOARD_ID := WNDR4300
   NETGEAR_HW_ID := 29763948+0+128+128+2x2+3x3
-  $(Device/netgear_ath79_nand_128m)
+  $(Device/netgear_ath79_nand)
 endef
 TARGET_DEVICES += netgear_wndr4300
 
