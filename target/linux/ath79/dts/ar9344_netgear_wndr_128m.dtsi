@@ -148,7 +148,8 @@
 			label = "firmware";
 			reg = <0x6c0000 0x7900000>;
 			compatible = "openwrt,uimage", "denx,uimage";
-			
+			openwrt,ih-magic = <0x33373033>;
+			openwrt,ih-type = <IH_TYPE_FILESYSTEM>;	
 		};
 
 		partition@7fc0000 {
