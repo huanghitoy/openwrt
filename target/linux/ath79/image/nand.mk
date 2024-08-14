@@ -32,7 +32,7 @@ endef
 
 define Build/zyxel-factory
 	let \
-		maxsize="$(call exp_units,$(RAS_ROOTFS_SIZE))"; \
+		maxsize="$(subst k,* 1024,$(RAS_ROOTFS_SIZE))"; \
 		let size="$$(stat -c%s $@)"; \
 		if [ $$size -lt $$maxsize ]; then \
 			$(STAGING_DIR_HOST)/bin/mkrasimage \
@@ -190,8 +190,7 @@ define Device/glinet_gl-e750
   SOC := qca9531
   DEVICE_VENDOR := GL.iNet
   DEVICE_MODEL := GL-E750
-  DEVICE_PACKAGES := kmod-ath10k-ct ath10k-firmware-qca9887-ct kmod-usb2 \
-	kmod-usb-net-qmi-wwan kmod-usb-serial-option uqmi
+  DEVICE_PACKAGES := kmod-ath10k-ct ath10k-firmware-qca9887-ct kmod-usb2
   SUPPORTED_DEVICES += gl-e750
   KERNEL_SIZE := 4096k
   IMAGE_SIZE := 131072k
@@ -204,41 +203,12 @@ define Device/glinet_gl-e750
 endef
 TARGET_DEVICES += glinet_gl-e750
 
-define Device/glinet_gl-s200-common
-  SOC := qca9531
-  DEVICE_VENDOR := GL.iNet
-  DEVICE_MODEL := GL-S200
-  DEVICE_PACKAGES := kmod-usb2 kmod-usb-serial-ch341
-  SUPPORTED_DEVICES += gl-s200 glinet,gl-s200
-endef
-
-define Device/glinet_gl-s200-nor
-  $(Device/glinet_gl-s200-common)
-  DEVICE_VARIANT := NOR
-  IMAGE_SIZE := 16000k
-endef
-TARGET_DEVICES += glinet_gl-s200-nor
-
-define Device/glinet_gl-s200-nor-nand
-  $(Device/glinet_gl-s200-common)
-  DEVICE_VARIANT := NOR/NAND
-  KERNEL_SIZE := 4096k
-  BLOCKSIZE := 128k
-  PAGESIZE := 2048
-  VID_HDR_OFFSET := 2048
-  IMAGES += factory.img
-  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
-  IMAGE/factory.img := append-kernel | pad-to $$$$(KERNEL_SIZE) | append-ubi
-  SUPPORTED_DEVICES += gl-s200 glinet,gl-s200
-endef
-TARGET_DEVICES += glinet_gl-s200-nor-nand
-
 define Device/glinet_gl-xe300
   SOC := qca9531
   DEVICE_VENDOR := GL.iNet
   DEVICE_MODEL := GL-XE300
   DEVICE_PACKAGES := kmod-usb2 block-mount kmod-usb-serial-ch341 \
-	kmod-usb-serial-option kmod-usb-net-qmi-wwan uqmi
+	kmod-usb-net-qmi-wwan uqmi
   KERNEL_SIZE := 4096k
   IMAGE_SIZE := 131072k
   PAGESIZE := 2048
@@ -312,7 +282,6 @@ define Device/meraki_mr18
 # KERNEL_INITRAMFS := $$(KERNEL)
   KERNEL_INITRAMFS :=
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
-  SUPPORTED_DEVICES += mr18
 endef
 TARGET_DEVICES += meraki_mr18
 
@@ -331,26 +300,6 @@ define Device/netgear_ath79_nand
   IMAGE/factory.img := append-kernel | pad-to $$$$(KERNEL_SIZE) | \
 	append-ubi | check-size | netgear-dni
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
-  UBINIZE_OPTS := -E 5
-endef
-
-define Device/netgear_ath79_nand_128m
-  DEVICE_VENDOR := NETGEAR
-  DEVICE_PACKAGES := kmod-usb2 kmod-usb-ledtrig-usbport
-  KERNEL_SIZE := 4096k
-  BLOCKSIZE := 128k
-  PAGESIZE := 2048
-  IMAGE_SIZE := 121m		
-  KERNEL := kernel-bin | append-dtb | lzma -d20 | \
-	pad-offset $$(KERNEL_SIZE) 129 | uImage lzma | \
-	append-string -e '\xff' | \
-	append-uImage-fakehdr filesystem $$(UIMAGE_MAGIC)
-  KERNEL_INITRAMFS := kernel-bin | append-dtb | lzma -d20 | uImage lzma
-  IMAGES := sysupgrade.bin factory.img
-  IMAGE/factory.img := append-kernel | append-ubi | netgear-dni | \
-	check-size
-  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata | \
-	check-size
   UBINIZE_OPTS := -E 5
 endef
 
@@ -388,7 +337,7 @@ define Device/netgear_wndr3700-v4
   UIMAGE_MAGIC := 0x33373033
   NETGEAR_BOARD_ID := WNDR3700v4
   NETGEAR_HW_ID := 29763948+128+128
-  $(Device/netgear_ath79_nand_128m)
+  $(Device/netgear_ath79_nand)
 endef
 TARGET_DEVICES += netgear_wndr3700-v4
 
@@ -398,7 +347,7 @@ define Device/netgear_wndr4300
   UIMAGE_MAGIC := 0x33373033
   NETGEAR_BOARD_ID := WNDR4300
   NETGEAR_HW_ID := 29763948+0+128+128+2x2+3x3
-  $(Device/netgear_ath79_nand_128m)
+  $(Device/netgear_ath79_nand)
 endef
 TARGET_DEVICES += netgear_wndr4300
 
