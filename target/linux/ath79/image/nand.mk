@@ -311,14 +311,12 @@ define Device/netgear_ath79_nand_128m
   PAGESIZE := 2048
   IMAGE_SIZE := 121m
   KERNEL := kernel-bin | append-dtb | lzma | \
-	pad-offset $$(KERNEL_SIZE) 129 | uImage lzma | \
-	append-string -e '\xff' | \
+	pad-offset $$(BLOCKSIZE) 129 | uImage lzma | pad-extra 1 | \
 	append-uImage-fakehdr filesystem $$(UIMAGE_MAGIC)
   IMAGES := sysupgrade.bin factory.img
-  IMAGE/factory.img := append-kernel | append-ubi | netgear-dni | \
-	check-size
-  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata | \
-	check-size
+  IMAGE/factory.img := append-kernel | pad-to $$$$(KERNEL_SIZE) | \
+	append-ubi | check-size | netgear-dni
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
   UBINIZE_OPTS := -E 5
 endef
 
